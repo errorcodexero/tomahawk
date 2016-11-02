@@ -46,6 +46,39 @@ Teleop::Teleop(){}
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
+Drive_goal teleop_drive_goal(double joy_x,double joy_y,double joy_theta,double joy_throttle,bool field_relative){
+	double throttle = .7+.3*fabs(joy_throttle); //Robot always drives at 70% power when throttle is not engaged //Adds the final 30% as a percentage of the throttle
+	joy_x = clip(joy_x) * throttle;
+	joy_y = -clip(joy_y) * throttle;//Invert Y
+	joy_theta = clip(joy_theta) * 0.75; //Twist is only ever goes at 75% speed and is unaffected by throttle
+	return Drive_goal(Pt(joy_x,joy_y,joy_theta),field_relative);
+}
+
+Drive_goal drive_goal(Control_status::Control_status control_status,
+		double joy_x,
+		double joy_y,
+		double joy_theta,
+		double joy_throttle,
+		bool field_relative)
+{
+	if(teleop(control_status)){
+		return teleop_drive_goal(joy_x,joy_y,joy_theta,joy_throttle,field_relative);
+	}
+	Drive_goal r;
+	switch(control_status){
+		case Control_status::AUTO_COLLECT:
+		case Control_status::A2_MOVE:
+			r.direction.y=-1; //Full power backwards
+			r.direction.theta = -0.1; //Slight twist to coutner the natrual twist from Holonomic drive base
+			break;
+		case Control_status::A2_TO_COLLECT:
+			r.direction.y=.4;
+		default:
+			//otherwise leave at the default, which is 0.
+			break;
+	}
+	return r;
+}
 Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
 	
@@ -61,6 +94,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			nudges[i].timer.update(info.in.now,enabled);
 		}
 		const double NUDGE_POWER=.4,NUDGE_CW_POWER=.4,NUDGE_CCW_POWER=-.4; 
+
 		goals.drive.left=clip([&]{
 			if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
 			if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;

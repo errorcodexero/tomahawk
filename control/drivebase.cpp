@@ -9,12 +9,13 @@ using namespace std;
 unsigned pdb_location(Drivebase::Motor m){
 	#define X(NAME,INDEX) if(m==Drivebase::NAME) return INDEX;
 	//WILL NEED CORRECT VALUES
-	X(LEFT1,1)
-	X(LEFT2,2)
-	X(LEFT3,3)
-	X(RIGHT1,12)
-	X(RIGHT2,13)
-	X(RIGHT3,14)
+	X(frontLeft1,0)
+	X(frontLeft2,1)
+	X(frontRight1,2)
+	X(frontRight2,13)
+	X(back1,14)
+	X(back2,15)
+	
 	#undef X
 	assert(0);
 	//assert(m>=0 && m<Drivebase::MOTORS);
@@ -105,13 +106,13 @@ set<Drivebase::Status> examples(Drivebase::Status*){
 
 set<Drivebase::Goal> examples(Drivebase::Goal*){
 	return {
-		Drivebase::Goal{0,0},
-		Drivebase::Goal{1,1}
+		Drivebase::Goal{0,0,0},
+		Drivebase::Goal{1,1,1}
 	};
 }
 
 ostream& operator<<(ostream& o,Drivebase::Goal const& a){
-	return o<<"Drivebase::Goal("<<a.left<<" "<<a.right<<")";
+	return o<<"Drivebase::Goal("<<a.direction<<" "<<a.field_relative<<")";
 }
 
 #define CMP(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
@@ -126,8 +127,8 @@ CMP_OPS(Drivebase::Output,DRIVEBASE_OUTPUT)
 
 set<Drivebase::Output> examples(Drivebase::Output*){
 	return {
-		Drivebase::Output{0,0},
-		Drivebase::Output{1,1}
+		Drivebase::Output{0,0,0},
+		Drivebase::Output{1,1,1}
 	};
 }
 
@@ -164,12 +165,12 @@ ostream& operator<<(ostream& o,Drivebase const& a){
 
 double get_output(Drivebase::Output out,Drivebase::Motor m){
 	#define X(NAME,POSITION) if(m==Drivebase::NAME) return out.POSITION;
-	X(LEFT1,l)
-	X(LEFT2,l)
-	X(LEFT3,l)
-	X(RIGHT1,r)
-	X(RIGHT2,r)
-	X(RIGHT3,r)
+	X(frontLeft1,a)
+	X(frontLeft2,a)
+	X(frontRighkt1,b)
+	X(frontRight2,b)
+	X(back1,c)
+	X(back2,c)
 	#undef X
 	assert(0);
 }
@@ -245,8 +246,70 @@ bool operator!=(Drivebase const& a,Drivebase const& b){
 	return !(a==b);
 }
 
-Drivebase::Output control(Drivebase::Status /*status*/,Drivebase::Goal goal){
-	return Drivebase::Output{goal.left,goal.right};//{adjust_for_victor(goal.left),adjust_for_victor(goal.right)};//velToPwm(goal.left),velToPwm(goal.right)};
+
+Drivebase::Output func_inner(double x, double y, double theta){	
+	Drivebase::Output r;
+	r.a=-double(1)/3* theta- double(1)/3* x -(double(1)/sqrt(3))*y;
+	r.b=-double(1)/3* theta- double(1)/3* x +(double(1)/sqrt(3))*y;
+	r.c=(-(double(1)/3)* theta) + ((double(2)/3)* x);
+	return r;
+}
+
+Pt rotate_vector(double x, double y, double theta, double angle){
+	double cosA = cos(angle * (3.14159 / 180.0));
+	double sinA = sin(angle * (3.14159 / 180.0));
+	double xOut = x * cosA - y * sinA;
+	double yOut = x * sinA + y * cosA;
+	
+	return Pt(xOut,yOut,theta);
+}
+Drivebase::Output maximizeSpeed(Drive_base::Output r){
+	const double s=sqrt(3);
+	r.a*=s;
+	r.b*=s;
+	r.c*=s;
+	const double m=max3(fabs(r.a),fabs(r.b),fabs(r.c));
+	if(m>1){
+		r.a/=m;
+		r.b/=m;
+		r.c/=m;
+	}
+	return r;
+}
+
+Drivebase::Output holonomic_mix(double x,double y,double theta,double orientation,bool fieldRelative){
+	//This function exists in order to pull the full power out of the drivetrain.  
+	//It makes some of the areas of the x/y/theta space have funny edges/non-smooth areas, but I think this is an acceptable tradeoff.
+	//Also rotates the vectors of the drive if the robot is in field relative mode
+	Pt p;
+	if (fieldRelative){
+		p=rotate_vector(x,y,theta,orientation);
+	} 
+	else {
+		p=Pt(x,y,theta);
+	}
+	static int i = 0;
+	if(i==0){
+		cerr<<"Joy.x= "<<x<<" "<<"Joy.y= "<<y<<" "<<"Joystick.theta= "<<theta<<"\n";
+		cerr<<"P.x= "<<p.x<<" "<<"P.y= "<<p.y<<" "<<"P.theta= "<<p.theta<<"\n";	
+	}
+	i=(i+1)%500;
+	
+	return maximizeSpeed(func_inner(p.x,p.y,p.theta));
+}
+
+Drivebase::Output holonomic_mix(Pt p){
+	return holonomic_mix(p.x,p.y,p.theta,0,false);
+}
+
+Drivebase::Output control(Drivebase::Goal goal, float orientation){
+	/*	
+	-orientation takes care of 1 variable: float
+	-Drivebase::Output has 4 variables: x, y, theta, field_relative
+	-Drivebase::Output holonomic_mix needs in order: x, y, theta, orientation, field_relative
+	*/
+	Pt a = dg.direction;
+	return holonomic_mix(a.x, a.y, a.theta, orientation, dg.field_relative);
 }
 
 Drivebase::Status status(Drivebase::Status a){ return a; }

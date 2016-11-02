@@ -1,4 +1,4 @@
-#ifndef DRIVEBASE_H
+#ifndef DRIVEBASE_
 #define DRIVEBASE_H
 
 #include <iosfwd>
@@ -7,9 +7,10 @@
 #include "motor_check.h"
 #include "../util/quick.h"
 #include "../util/countdown_timer.h"
+#include "../util/point.h"
 
 struct Drivebase{
-	enum Motor{LEFT1,LEFT2,LEFT3,RIGHT1,RIGHT2,RIGHT3,MOTORS};
+	enum Motor{frontLeft1,frontLeft2,frontRight1,frontRight2,back1,back2,MOTORS};
 
 	typedef std::pair<Digital_in,Digital_in> Encoder_info;
 	typedef std::pair<int,int> Encoder_ticks;
@@ -28,8 +29,14 @@ struct Drivebase{
 	Input_reader input_reader;
 
 	#define DRIVEBASE_OUTPUT(X)\
-		X(double,l)\
-		X(double,r)
+		X(double,a)\
+		X(double,b)\
+		X(double,c)
+
+	//Outputs to motors; 
+	//a = frontLeft, b = frontRight, c = back;
+	//+value = clockwise
+
 	DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
 	typedef std::pair<double,double> Speeds;
@@ -62,8 +69,8 @@ struct Drivebase{
 	Output_applicator output_applicator;
 
 	struct Goal{
-		//speeds
-		double left,right;
+		Pt direction;
+		bool field_relative;
 	};
 };
 
