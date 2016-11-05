@@ -9,8 +9,8 @@ Executive Auto_stop::next_mode(Next_mode_info){
 
 Toplevel::Goal Auto_stop::run(Run_info){
 	Toplevel::Goal goals;
-	goals.drive.A=0;
-	goals.drive.B=0;
+	goals.drive.direction=Pt(0,0,0);
+	goals.drive.field_relative=0;
 	return goals;
 }
 

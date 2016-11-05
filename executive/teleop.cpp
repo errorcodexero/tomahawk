@@ -46,73 +46,40 @@ Teleop::Teleop(){}
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Drive_goal teleop_drive_goal(double joy_x,double joy_y,double joy_theta,double joy_throttle,bool field_relative){
-	double throttle = .7+.3*fabs(joy_throttle); //Robot always drives at 70% power when throttle is not engaged //Adds the final 30% as a percentage of the throttle
-	joy_x = clip(joy_x) * throttle;
-	joy_y = -clip(joy_y) * throttle;//Invert Y
-	joy_theta = clip(joy_theta) * 0.75; //Twist is only ever goes at 75% speed and is unaffected by throttle
-	return Drive_goal(Pt(joy_x,joy_y,joy_theta),field_relative);
-}
-
-Drive_goal drive_goal(Control_status::Control_status control_status,
-		double joy_x,
-		double joy_y,
-		double joy_theta,
-		double joy_throttle,
-		bool field_relative)
-{
-	if(teleop(control_status)){
-		return teleop_drive_goal(joy_x,joy_y,joy_theta,joy_throttle,field_relative);
-	}
-	Drive_goal r;
-	switch(control_status){
-		case Control_status::AUTO_COLLECT:
-		case Control_status::A2_MOVE:
-			r.direction.y=-1; //Full power backwards
-			r.direction.theta = -0.1; //Slight twist to coutner the natrual twist from Holonomic drive base
-			break;
-		case Control_status::A2_TO_COLLECT:
-			r.direction.y=.4;
-		default:
-			//otherwise leave at the default, which is 0.
-			break;
-	}
-	return r;
-}
 Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
 	
 	bool enabled = info.in.robot_mode.enabled;
 
 	{//Set drive goals
-		bool spin=fabs(info.main_joystick.axis[Gamepad_axis::RIGHTX])>.01;//drive turning button
 		double boost=info.main_joystick.axis[Gamepad_axis::LTRIGGER],slow=info.main_joystick.axis[Gamepad_axis::RTRIGGER];//turbo and slow buttons	
 	
 		for(int i=0;i<NUDGES;i++){
-			const array<unsigned int,NUDGES> nudge_buttons={Gamepad_button::Y,Gamepad_button::A,Gamepad_button::B,Gamepad_button::X};//Forward, backward, clockwise, counter-clockwise
+			const array<unsigned int,NUDGES> nudge_buttons={Gamepad_button::Y,Gamepad_button::A,Gamepad_button::X,Gamepad_button::B,Gamepad_button::LB,Gamepad_button::RB};
+			//Forward, backward, left, right, clockwise, counter-clockwise
 			if(nudges[i].trigger(boost<.25 && info.main_joystick.button[nudge_buttons[i]])) nudges[i].timer.set(.1);
 			nudges[i].timer.update(info.in.now,enabled);
 		}
 		const double NUDGE_POWER=.4,NUDGE_CW_POWER=.4,NUDGE_CCW_POWER=-.4; 
+		
+		field_relative.update(info.main_joystick.button[Gamepad_button::START]);
 
-		goals.drive.left=clip([&]{
-			if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
-			if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;
-			if(!nudges[Nudges::CLOCKWISE].timer.done()) return -NUDGE_CW_POWER;
-			if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -NUDGE_CCW_POWER;
-			double power=set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
-			if(spin) power+=set_drive_speed(-info.main_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
-			return power;
+		goals.drive.direction.x=clip([&]{
+			if (!nudges[Nudges::LEFT].timer.done()) return NUDGE_POWER;
+			if (!nudges[Nudges::RIGHT].timer.done()) return -NUDGE_POWER;
+			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTX],boost,slow);
 		}());
-		goals.drive.right=clip([&]{
-			if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
-			else if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;
-			else if(!nudges[Nudges::CLOCKWISE].timer.done()) return NUDGE_CW_POWER;
-			else if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return NUDGE_CCW_POWER;
-			double power=set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
-			if(spin) power+=set_drive_speed(info.main_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
-			return power;
+		goals.drive.direction.y=-clip([&]{
+			if (!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
+			if (!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
+			return set_drive_speed(info.main_joysick.axis[Gamepad_axis::LEFTY],boost,slow);
 		}());
+		goals.drive.direction.theta=clip([&]{
+			if (!nudges[Nudges::CLOCKWISE].timer.done()) return NUDGE_CW_POWER;
+			if (!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return NUDGE_CCW_POWER;
+			return set_drive_speed(info.main_joysick.axis[Gamepad_axis::RIGHTX],boost,slow) * 0.75;
+		}());
+		goals.drive.field_relative=field_relative.get();
 	}
 	
 	return goals;

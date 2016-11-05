@@ -106,8 +106,8 @@ set<Drivebase::Status> examples(Drivebase::Status*){
 
 set<Drivebase::Goal> examples(Drivebase::Goal*){
 	return {
-		Drivebase::Goal{0,0,0},
-		Drivebase::Goal{1,1,1}
+		Drivebase::Goal{Pt(0,0,0),0},
+		Drivebase::Goal{Pt(1,1,1),1}
 	};
 }
 

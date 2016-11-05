@@ -32,11 +32,9 @@ struct Drivebase{
 		X(double,a)\
 		X(double,b)\
 		X(double,c)
-
-	//Outputs to motors; 
-	//a = frontLeft, b = frontRight, c = back;
-	//+value = clockwise
-
+		//Outputs to motors; 
+		//a = frontLeft, b = frontRight, c = back;
+		//+value = clockwise
 	DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
 	typedef std::pair<double,double> Speeds;
