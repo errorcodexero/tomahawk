@@ -62,7 +62,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		}
 		const double NUDGE_POWER=.4,NUDGE_CW_POWER=.4,NUDGE_CCW_POWER=-.4; 
 		
-		field_relative.update(info.main_joystick.button[Gamepad_button::START]);
+		//field_relative.update(info.main_joystick.button[Gamepad_button::START]); //Not worth it right now
 
 		goals.drive.direction.x=clip([&]{
 			if (!nudges[Nudges::LEFT].timer.done()) return NUDGE_POWER;
@@ -72,12 +72,12 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.drive.direction.y=-clip([&]{
 			if (!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
 			if (!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
-			return set_drive_speed(info.main_joysick.axis[Gamepad_axis::LEFTY],boost,slow);
+			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
 		}());
 		goals.drive.direction.theta=clip([&]{
 			if (!nudges[Nudges::CLOCKWISE].timer.done()) return NUDGE_CW_POWER;
 			if (!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return NUDGE_CCW_POWER;
-			return set_drive_speed(info.main_joysick.axis[Gamepad_axis::RIGHTX],boost,slow) * 0.75;
+			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::RIGHTX],boost,slow) * 0.75;
 		}());
 		goals.drive.field_relative=field_relative.get();
 	}

@@ -19,6 +19,8 @@ Pt& operator+=(Pt&,Pt);
 bool approx_equal(double,double);
 bool approx_equal(Pt,Pt);
 
+bool operator<(Pt,Pt);
+
 Pt shift_axes_clockwise(Pt p,Rad theta);
 
 #endif

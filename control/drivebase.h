@@ -10,16 +10,16 @@
 #include "../util/point.h"
 
 struct Drivebase{
-	enum Motor{frontLeft1,frontLeft2,frontRight1,frontRight2,back1,back2,MOTORS};
+	enum Motor{FRONTLEFT1,FRONTLEFT2,FRONTRIGHT1,FRONTRIGHT2,BACK1,BACK2,MOTORS};
 
 	typedef std::pair<Digital_in,Digital_in> Encoder_info;
 	typedef std::pair<int,int> Encoder_ticks;
 
 	#define DRIVEBASE_INPUT(X) \
-		X(SINGLE_ARG(std::array<double,MOTORS>),current)\
-		X(Encoder_info,left)\
-		X(Encoder_info,right) \
-		X(Encoder_ticks,ticks)// first is left, seconds is right
+		X(SINGLE_ARG(std::array<double,MOTORS>),current)
+		//X(Encoder_info,left)
+		//X(Encoder_info,right)
+		//X(Encoder_ticks,ticks)// first is left, seconds is right
 	DECLARE_STRUCT(Input,DRIVEBASE_INPUT)
 
 	struct Input_reader{
@@ -41,9 +41,10 @@ struct Drivebase{
 
 	#define DRIVEBASE_STATUS(X) \
 		X(SINGLE_ARG(std::array<Motor_check::Status,MOTORS>),motor)\
-		X(bool,stall) \
-		X(Speeds,speeds) \
-		X(Encoder_ticks,ticks)  //first is left, second is right
+		X(bool,stall)
+		//X(float,orientation)  //Not worth it right now
+		//X(Speeds,speeds)
+		//X(Encoder_ticks,ticks)  //first is left, second is right
 	DECLARE_STRUCT(Status,DRIVEBASE_STATUS)
 
 	typedef Status Status_detail;

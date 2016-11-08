@@ -35,6 +35,15 @@ bool approx_equal(Pt a,Pt b){
 	return approx_equal(a.x,b.x) && approx_equal(a.y,b.y) && approx_equal(a.theta,b.theta);
 }
 
+bool operator<(Pt a,Pt b){
+	#define CMP(name) if(a.name<b.name) return 1; if (b.name<a.name) return 0;
+	CMP(x)
+	CMP(y)
+	CMP(theta)
+	#undef CMP
+	return 0;
+}
+
 Pt shift_axes_clockwise(Pt p,Rad theta){
 	Pt r;
 	r.x=cos(theta)*p.x+sin(theta)*p.y;

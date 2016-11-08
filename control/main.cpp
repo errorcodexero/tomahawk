@@ -129,7 +129,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Toplevel::Status_detail toplevel_status=toplevel.estimator.get();
 		
 	//if(SLOW_PRINT) cout<<"panel:"<<panel<<"\n";
-	cout << "Goals: " << motion_profile.goal << " Current: " << ticks_to_inches(toplevel_status.drive.ticks.first/*in.digital_io.encoder[0]*/) << endl;
+	//cout << "Goals: " << motion_profile.goal << " Current: " << ticks_to_inches(toplevel_status.drive.ticks.first/*in.digital_io.encoder[0]*/) << endl;
 	
 	if(SLOW_PRINT) cout<<"br_step:"<<br_step<<"\n";
 	
@@ -139,12 +139,12 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Toplevel::Goal goals;
 	//decltype(in.current) robotcurrent;
 	//for(auto &a:robotcurrent) a = 0;
-	if((toplevel_status.drive.ticks.first && initial_encoders.first==10000) || (toplevel_status.drive.ticks.second && initial_encoders.second==10000)) set_initial_encoders=true;
+	/*if((toplevel_status.drive.ticks.first && initial_encoders.first==10000) || (toplevel_status.drive.ticks.second && initial_encoders.second==10000)) set_initial_encoders=true;
 	if(set_initial_encoders){
 		set_initial_encoders=false;
 		cout<<"\nSET INITIAL ENCODER VALUES\n";
 		initial_encoders = toplevel_status.drive.ticks;	
-	}
+	}*/
 	goals = mode_.run(Run_info{in,main_joystick,gunner_joystick,panel,toplevel_status});
 	
 	auto next=mode_.next_mode(Next_mode_info{in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),panel,in});

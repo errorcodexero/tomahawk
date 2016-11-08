@@ -9,12 +9,12 @@ using namespace std;
 unsigned pdb_location(Drivebase::Motor m){
 	#define X(NAME,INDEX) if(m==Drivebase::NAME) return INDEX;
 	//WILL NEED CORRECT VALUES
-	X(frontLeft1,0)
-	X(frontLeft2,1)
-	X(frontRight1,2)
-	X(frontRight2,13)
-	X(back1,14)
-	X(back2,15)
+	X(FRONTLEFT1,0)
+	X(FRONTLEFT2,1)
+	X(FRONTRIGHT1,2)
+	X(FRONTRIGHT2,13)
+	X(BACK1,14)
+	X(BACK2,15)
 	
 	#undef X
 	assert(0);
@@ -43,7 +43,7 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 	for(unsigned i=0;i<MOTORS;i++){
 		all.current[pdb_location((Motor)i)]=in.current[i];
 	}
-	auto set=[&](unsigned index,Digital_in value){
+	/*auto set=[&](unsigned index,Digital_in value){
 		all.digital_io.in[index]=value;
 	};
 	auto encoder=[&](unsigned a,unsigned b,Encoder_info e){
@@ -53,14 +53,14 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 	encoder(L_ENCODER_PORTS,in.left);
 	encoder(R_ENCODER_PORTS,in.right);
 	all.digital_io.encoder[L_ENCODER_LOC] = in.ticks.first;
-	all.digital_io.encoder[R_ENCODER_LOC] = in.ticks.second;
+	all.digital_io.encoder[R_ENCODER_LOC] = in.ticks.second;*/
 	return all;
 }
 
 Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)const{
-	auto encoder_info=[&](unsigned a, unsigned b){
+	/*auto encoder_info=[&](unsigned a, unsigned b){
 		return make_pair(in.digital_io.in[a],in.digital_io.in[b]);
-	};
+	};*/
 	return Drivebase::Input{
 		[&](){
 			array<double,Drivebase::MOTORS> r;
@@ -69,10 +69,10 @@ Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)cons
 				r[i]=in.current[pdb_location(m)];
 			}
 			return r;
-		}(),
+		}()/*,
 		encoder_info(L_ENCODER_PORTS),
 		encoder_info(R_ENCODER_PORTS),
-		{encoderconv(in.digital_io.encoder[L_ENCODER_LOC]),encoderconv(in.digital_io.encoder[R_ENCODER_LOC])}
+		{encoderconv(in.digital_io.encoder[L_ENCODER_LOC]),encoderconv(in.digital_io.encoder[R_ENCODER_LOC])}*/
 	};
 }
 
@@ -98,9 +98,9 @@ set<Drivebase::Status> examples(Drivebase::Status*){
 			Motor_check::Status::OK_
 		}
 		,
-		false,
-		{0.0,0.0},
-		{0.0,0.0}
+		false
+		/*{0.0,0.0},
+		{0.0,0.0}*/
 	}};
 }
 
@@ -118,8 +118,8 @@ ostream& operator<<(ostream& o,Drivebase::Goal const& a){
 #define CMP(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
 
 bool operator<(Drivebase::Goal const& a,Drivebase::Goal const& b){
-	CMP(left)
-	CMP(right)
+	CMP(direction)
+	CMP(field_relative)
 	return 0;
 }
 
@@ -133,17 +133,17 @@ set<Drivebase::Output> examples(Drivebase::Output*){
 }
 
 set<Drivebase::Input> examples(Drivebase::Input*){
-	auto d=Digital_in::_0;
-	auto p=make_pair(d,d);
+	/*auto d=Digital_in::_0;
+	auto p=make_pair(d,d);*/
 	return {Drivebase::Input{
-		{0,0},p,p,{0,0}
+		{0,0}//,p,p,{0,0}
 	}};
 }
 Drivebase::Estimator::Estimator(){
 	stall = false;
 	timer.set(.05);
-	last_ticks = {0,0};
-	speeds = {0.0,0.0};
+	/*last_ticks = {0,0};
+	speeds = {0.0,0.0};*/
 }
 
 Drivebase::Status_detail Drivebase::Estimator::get()const{
@@ -152,7 +152,7 @@ Drivebase::Status_detail Drivebase::Estimator::get()const{
 		a[i]=motor_check[i].get();
 	}
 	
-	return Status{a,stall,speeds,last_ticks};
+	return Status{a,stall/*,speeds,last_ticks*/};
 }
 
 ostream& operator<<(ostream& o,Drivebase::Output_applicator){
@@ -165,12 +165,12 @@ ostream& operator<<(ostream& o,Drivebase const& a){
 
 double get_output(Drivebase::Output out,Drivebase::Motor m){
 	#define X(NAME,POSITION) if(m==Drivebase::NAME) return out.POSITION;
-	X(frontLeft1,a)
-	X(frontLeft2,a)
-	X(frontRighkt1,b)
-	X(frontRight2,b)
-	X(back1,c)
-	X(back2,c)
+	X(FRONTLEFT1,a)
+	X(FRONTLEFT2,a)
+	X(FRONTRIGHT1,b)
+	X(FRONTRIGHT2,b)
+	X(BACK1,c)
+	X(BACK2,c)
 	#undef X
 	assert(0);
 }
@@ -185,14 +185,14 @@ double mean(std::array<double, 6ul> a){
 	return sum(a)/a.size();
 }
 void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output out){\
-	timer.update(now,true);
+	/*timer.update(now,true);
 	static const double POLL_TIME = .05;//seconds
 	if(timer.done()){
 		speeds.first = ticks_to_inches((last_ticks.first-in.ticks.first)/POLL_TIME);
 		speeds.second = ticks_to_inches((last_ticks.second-in.ticks.second)/POLL_TIME);
 		last_ticks = in.ticks;
 		timer.set(POLL_TIME);
-	}
+	}*/
 	
 	//cout << "Encoder in: " << in << endl;
 	for(unsigned i=0;i<MOTORS;i++){
@@ -206,20 +206,22 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 }
 
 Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drivebase::Output b)const{
-	robot.pwm[0]=-pwm_convert(b.l);
-	robot.pwm[1]=pwm_convert(b.r);
+	robot.pwm[0]=pwm_convert(b.a);
+	robot.pwm[1]=pwm_convert(b.b);
+	robot.pwm[2]=pwm_convert(b.c);
 
-	robot.digital_io[0]=Digital_out::encoder(0,1);
+	/*robot.digital_io[0]=Digital_out::encoder(0,1);
 	robot.digital_io[1]=Digital_out::encoder(0,0);
 	robot.digital_io[2]=Digital_out::encoder(1,1);
-	robot.digital_io[3]=Digital_out::encoder(1,0);
+	robot.digital_io[3]=Digital_out::encoder(1,0);*/
 	return robot;
 }
 
 Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)const{
 	return Drivebase::Output{
-		-from_pwm(robot.pwm[0]),
-		from_pwm(robot.pwm[1])
+		from_pwm(robot.pwm[0]),
+		from_pwm(robot.pwm[1]),
+		from_pwm(robot.pwm[2])
 	};
 }
 
@@ -246,9 +248,12 @@ bool operator!=(Drivebase const& a,Drivebase const& b){
 	return !(a==b);
 }
 
+double max3(double a,double b,double c){
+	return max(max(a,b),c);
+}
 
 Drivebase::Output func_inner(double x, double y, double theta){	
-	Drivebase::Output r;
+	Drivebase::Output r{0,0,0};
 	r.a=-double(1)/3* theta- double(1)/3* x -(double(1)/sqrt(3))*y;
 	r.b=-double(1)/3* theta- double(1)/3* x +(double(1)/sqrt(3))*y;
 	r.c=(-(double(1)/3)* theta) + ((double(2)/3)* x);
@@ -263,7 +268,8 @@ Pt rotate_vector(double x, double y, double theta, double angle){
 	
 	return Pt(xOut,yOut,theta);
 }
-Drivebase::Output maximizeSpeed(Drive_base::Output r){
+
+Drivebase::Output maximizeSpeed(Drivebase::Output r){
 	const double s=sqrt(3);
 	r.a*=s;
 	r.b*=s;
@@ -302,14 +308,14 @@ Drivebase::Output holonomic_mix(Pt p){
 	return holonomic_mix(p.x,p.y,p.theta,0,false);
 }
 
-Drivebase::Output control(Drivebase::Goal goal, float orientation){
+Drivebase::Output control(Drivebase::Status, Drivebase::Goal goal){
 	/*	
 	-orientation takes care of 1 variable: float
 	-Drivebase::Output has 4 variables: x, y, theta, field_relative
 	-Drivebase::Output holonomic_mix needs in order: x, y, theta, orientation, field_relative
 	*/
-	Pt a = dg.direction;
-	return holonomic_mix(a.x, a.y, a.theta, orientation, dg.field_relative);
+	Pt a = goal.direction;
+	return holonomic_mix(a.x, a.y, a.theta, 0/*orientation*/, goal.field_relative);
 }
 
 Drivebase::Status status(Drivebase::Status a){ return a; }
@@ -320,6 +326,8 @@ bool ready(Drivebase::Status,Drivebase::Goal){ return 1; }
 #include "formal.h"
 int main(){
 	Drivebase d;
-	tester(d);
+	Tester_mode t;
+	t.check_outputs_exhaustive=0;
+	tester(d,t);
 }
 #endif
