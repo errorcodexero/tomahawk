@@ -108,7 +108,7 @@ struct Robot_outputs{
 	static const unsigned DIGITAL_IOS=10;//there are really 14 on the cRIO and the roboRIO headers say 26.
 	Checked_array<Digital_out,DIGITAL_IOS> digital_io;
 	
-	static const unsigned TALON_SRX_OUTPUTS=0;
+	static const unsigned TALON_SRX_OUTPUTS=1;
 	Checked_array<Talon_srx_output, TALON_SRX_OUTPUTS> talon_srx;
 	
 	static const unsigned CAN_JAGUARS=0;
@@ -198,7 +198,7 @@ struct Robot_inputs{
 	static const unsigned ANALOG_INPUTS=4;
 	Checked_array<Volt,ANALOG_INPUTS> analog;
 
-	static const unsigned TALON_SRX_INPUTS=0;
+	static const unsigned TALON_SRX_INPUTS=1;
 	Checked_array<Talon_srx_input, TALON_SRX_INPUTS> talon_srx;
 	
 	Checked_array<Jaguar_input,Robot_outputs::CAN_JAGUARS> jaguar;
