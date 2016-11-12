@@ -69,7 +69,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			if (!nudges[Nudges::RIGHT].timer.done()) return -NUDGE_POWER;
 			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTX],boost,slow);
 		}());
-		goals.drive.direction.y=-clip([&]{
+		goals.drive.direction.y=clip([&]{
 			if (!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
 			if (!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
 			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
