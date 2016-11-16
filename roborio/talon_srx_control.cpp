@@ -111,27 +111,27 @@ Talon_srx_controls::Talon_srx_controls():init_(false){}
 
 void Talon_srx_controls::init(){
 	if(!init_){
-		for(unsigned int i=0; i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
+		/*for(unsigned int i=0; i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
 			talons[i].init(i);
-		}
+		}*/
 		init_=true;
 	}
 }
 
-void Talon_srx_controls::set(Checked_array<Talon_srx_output,Robot_outputs::TALON_SRX_OUTPUTS> const& a,Checked_array<bool,Robot_outputs::TALON_SRX_OUTPUTS> const& enable){
+void Talon_srx_controls::set(Checked_array<Talon_srx_output,Robot_outputs::TALON_SRX_OUTPUTS> const& /*a*/,Checked_array<bool,Robot_outputs::TALON_SRX_OUTPUTS> const& /*enable*/){
 	init();
-	for(unsigned int i=0; i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
+	/*for(unsigned int i=0; i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
 		talons[i].set(a[i],enable[i]);
-	}
+	}*/
 }
 
 array<Talon_srx_input,Robot_inputs::TALON_SRX_INPUTS> Talon_srx_controls::get(){
 	init();
 	
 	array<Talon_srx_input,Robot_inputs::TALON_SRX_INPUTS> inputs;
-	for(unsigned int i=0; i<Robot_inputs::TALON_SRX_INPUTS; i++){
+	/*for(unsigned int i=0; i<Robot_inputs::TALON_SRX_INPUTS; i++){
 		inputs[i]=talons[i].get();
-	}
+	}*/
 	return inputs;
 }
 

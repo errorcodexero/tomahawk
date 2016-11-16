@@ -13,8 +13,8 @@ Input::Input(Type t,unsigned i):type_(t),index_(i){}
 	X(digital_io,DIGITAL_IO,Robot_outputs::DIGITAL_IOS)\
 	X(encoder,ENCODER,Digital_inputs::ENCODERS)\
 	X(analog,ANALOG,Robot_inputs::ANALOG_INPUTS)\
-	X(talon_srx,TALON_SRX,Robot_inputs::TALON_SRX_INPUTS)\
 	X(current,CURRENT,Robot_inputs::CURRENT)
+//	X(talon_srx,TALON_SRX,Robot_inputs::TALON_SRX_INPUTS)
 //	X(can_jaguar,CAN_JAGUAR,Robot_outputs::CAN_JAGUARS)
 
 bool numbered_type(Input::Type t){

@@ -226,7 +226,7 @@ class To_crio
 	int error_code;
 	USER_CODE main;
 	int skipped;
-	Talon_srx_controls talon_srx_controls;
+	//Talon_srx_controls talon_srx_controls;
 	//Jag_control jaguar[Robot_outputs::CAN_JAGUARS];
 	//DriverStationLCD *lcd;
 	//NetworkTable *table;
@@ -251,7 +251,7 @@ public:
 				if(!solenoid[i]) error_code|=8;
 			//}
 		}
-		talon_srx_controls.init();
+		//talon_srx_controls.init();
 		
 		for(unsigned i=0;i<Robot_outputs::PWMS;i++){
 			pwm[i]=new VictorSP(i);//untested
@@ -424,13 +424,13 @@ public:
 		
 		//cout << "d_io: " << digital_io << endl << "o.d.io: " << out.digital_io << endl ;
 
-		{
+		/*{
 			Checked_array<bool,Robot_outputs::TALON_SRX_OUTPUTS> enable_all;
 			for(unsigned int i=0; i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
 				enable_all[i]=true;
 			}
 			talon_srx_controls.set(out.talon_srx,enable_all); 
-		}
+		}*/
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){
@@ -554,7 +554,7 @@ public:
 			//in.digital_io[i]=digital_io[i].get();
 		}
 		in.digital_io=digital_io.get();
-		in.talon_srx=talon_srx_controls.get();
+		//in.talon_srx=talon_srx_controls.get();
 		//cout<<"in:"<<in<<"\n";
 		//}
 		/*if(gyro){

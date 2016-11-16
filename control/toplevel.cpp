@@ -424,11 +424,11 @@ pair<Robot_inputs,Robot_inputs> create_pair(Robot_inputs*){
 		r.first.analog[i]=p.first;
 		r.second.analog[i]=p.second;
 	}
-	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+	/*for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
 		auto p=create_pair((Talon_srx_input*)0);
 		r.first.talon_srx[i]=p.first;
 		r.second.talon_srx[i]=p.second;
-	}
+	}*/
 	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		auto p=create_pair((Can_jaguar_input*)0);
 		r.first.can_jaguar[i]=p.first;
@@ -496,7 +496,7 @@ set<Input> different(Robot_inputs const& a,Robot_inputs const& b){
 		}
 	X(Robot_outputs::DIGITAL_IOS,digital_io.in,digital_io)
 	X(Robot_inputs::ANALOG_INPUTS,analog,analog)
-	X(Robot_inputs::TALON_SRX_INPUTS,talon_srx,talon_srx)
+	//X(Robot_inputs::TALON_SRX_INPUTS,talon_srx,talon_srx)
 	X(Robot_inputs::CURRENT,current,current)
 	#undef X
 	if(a.pump!=b.pump) r|=Input::pump();
@@ -521,7 +521,7 @@ set<Output> different(Robot_outputs const& a,Robot_outputs const& b){
 	X(PWMS,pwm,pwm)
 	X(SOLENOIDS,solenoid,solenoid)
 	X(DIGITAL_IOS,digital_io,digital_io)
-	X(TALON_SRX_OUTPUTS,talon_srx,talon_srx)
+	//X(TALON_SRX_OUTPUTS,talon_srx,talon_srx)
 	#undef X
 	if(a.pump_auto!=b.pump_auto) r|=Output::pump();
 	return r;

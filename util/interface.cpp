@@ -295,11 +295,11 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 			return 0;
 		}
 	}
-	for(unsigned int i=0;i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
+	/*for(unsigned int i=0;i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
 		if(a.talon_srx[i]!=b.talon_srx[i]){
 			return 0;
 		}
-	}
+	}*/
 	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		if(a.jaguar[i]!=b.jaguar[i]){
 			return 0;
@@ -335,10 +335,10 @@ bool operator<(Robot_outputs a,Robot_outputs b){
 		if(b1<a1) return 0;
 	}
 	
-	for(unsigned i=0;i<Robot_outputs::TALON_SRX_OUTPUTS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::TALON_SRX_OUTPUTS;i++){
 		if(a.talon_srx[i]<b.talon_srx[i])return 1;
 		if(b.talon_srx[i]<a.talon_srx[i])return 0;
-	}
+	}*/
 	
 	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		auto a1=a.jaguar[i];
@@ -370,10 +370,10 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 		//o<<a.digital_io[i];
 		terse(o,a.digital_io[i]);
 	}
-	o<<" talon_srx:";
+	/*o<<" talon_srx:";
 	for(unsigned i=0;i<a.Robot_outputs::TALON_SRX_OUTPUTS;i++){
 		o<<a.talon_srx[i];
-	}
+	}*/
 	o<<" panel_output:";
 	for(unsigned i=0;i<Panel_outputs::PANEL_OUTPUTS;i++){
 		o<<a.panel_output[i];
@@ -617,11 +617,11 @@ bool operator==(Robot_inputs a,Robot_inputs b){
 			return 0;
 		}
 	}*/
-	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+	/*for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
 		if(a.talon_srx[i]!=b.talon_srx[i]){
 			return 0;
 		}
-	}
+	}*/
 	for(unsigned i=0; i<Robot_inputs::CURRENT;i++){
 		if(a.current[i]!=b.current[i]){
 			return 0;
@@ -642,7 +642,7 @@ bool operator<(Robot_inputs a,Robot_inputs b){
 	X(joystick)
 	X(digital_io)
 	X(analog)
-	X(talon_srx)
+	//X(talon_srx)
 	//X(jaguar) 
 	X(driver_station)
 	X(orientation)
@@ -668,10 +668,10 @@ ostream& operator<<(ostream& o,Robot_inputs a){
 	for(unsigned i=0;i<a.ANALOG_INPUTS;i++){
 		o<<(i)<<" "<<a.analog[i]<<' ';
 	}
-	o<<" talon_srx:";
+	/*o<<" talon_srx:";
 	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
 		o<<a.talon_srx[i];
-	}
+	}*/
 	/*o<<" jaguar:";
 	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		o<<a.jaguar[i];

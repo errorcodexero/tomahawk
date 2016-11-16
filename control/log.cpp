@@ -46,9 +46,9 @@ string get_logfilename(){
 	X(joystick) \
 	X(digital_io) \
 	X(analog) \
-	X(talon_srx) \
 	X(current) \
 	X(pump)
+//	X(talon_srx)
 
 template<typename Func>
 void visit(Func f,double d){

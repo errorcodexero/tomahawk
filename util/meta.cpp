@@ -92,10 +92,10 @@ bool operator<(Robot_output const& a,Robot_output const& b){
 	X(JOYSTICK,Joystick,joystick)\
 	X(DIGITAL_IO,Digital_io_id,digital_io)\
 	X(ANALOG,Analog_id,analog)\
-	X(TALON_SRX,Talon_srx_id,talon_srx)\
 	X(DRIVER_STATION,Driver_station,driver_station)\
 	X(CURRENT,Current,current)\
 	X(PUMP,Pump_in,pump)
+//	X(TALON_SRX,Talon_srx_id,talon_srx)
 
 struct Robot_input{
 	enum class Type{ROBOT_INPUT(A_LIST)};
@@ -131,7 +131,7 @@ set<Robot_output> differences(Robot_outputs const& a,Robot_outputs const& b){
 	CHECK_NUMBERED(SOLENOID,Solenoid_id,solenoid)
 	CHECK_NUMBERED(RELAY,Relay_id,relay)
 	CHECK_NUMBERED(DIGITAL_IO,Digital_io_id,digital_io)
-	CHECK_NUMBERED(TALON_SRX_OUTPUT,Talon_srx_id,talon_srx)
+	//CHECK_NUMBERED(TALON_SRX_OUTPUT,Talon_srx_id,talon_srx)
 	#undef CHECK_NUMBERED
 
 	#define X(A,B,C) if(a.C!=b.C) r|=Robot_output{B{}};
@@ -150,9 +150,9 @@ set<Robot_input> differences(Robot_inputs const& a,Robot_inputs const& b){
 				r|=Robot_input{B{i}};\
 			}\
 		}
-	CHECK_NUMBERED(TALON_SRX_INPUTS,Talon_srx_id,talon_srx)
+	//CHECK_NUMBERED(TALON_SRX_INPUTS,Talon_srx_id,talon_srx)
 	CHECK_NUMBERED(ANALOG_INPUTS,Analog_id,analog)
-	CHECK_NUMBERED(TALON_SRX_INPUTS,Talon_srx_id,talon_srx)
+	//CHECK_NUMBERED(TALON_SRX_INPUTS,Talon_srx_id,talon_srx)
 	CHECK_NUMBERED(CURRENT,Current,current)
 
 	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
