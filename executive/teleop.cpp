@@ -81,7 +81,15 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		}());
 		goals.drive.field_relative=field_relative.get();
 	}
-	
+
+	goals.gun=[&]{
+		if(info.gunner_joystick.axis[Gamepad_axis::LTRIGGER]>.9){
+			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9) return Gun::Goal::SHOOT;
+			else return Gun::Goal::REV;
+		}
+		else return Gun::Goal::OFF;
+	}();
+
 	return goals;
 }
 
