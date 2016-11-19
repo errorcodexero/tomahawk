@@ -1,12 +1,11 @@
 HIGH PRIORITY for Bunnybots:
-	- Drivebase
-	- Gun
+	- Gun - burst firing
 	- Logging
 
 
 NOT AS HIGH PRIORITY for Bunnybots:
 	- Autonomous
-	- Log Analysis - Nick
+	- Log Analysis
 	- Laptop configuration
 		-ssh config:
 			-Fix the "rm ~/.ssh/known_hosts" problem
@@ -26,8 +25,6 @@ NICE THINGS TO HAVE:
 LOG LIST:
 	-RIO Time			10chars 
 	-RIO mode			4chars
-	-Collector Mode			4chars
-	-Climber Mode			4chars
 	-OI inputs (panel)		50chars
 	-PDP currents			120chars
 	-Robot Outputs			130chars
