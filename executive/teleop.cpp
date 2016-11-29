@@ -50,6 +50,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
 	
 	bool enabled = info.in.robot_mode.enabled;
+	
+	burst_timer.update(info.in.now,enabled);
 
 	{//Set drive goals
 		double boost=info.main_joystick.axis[Gamepad_axis::LTRIGGER],slow=info.main_joystick.axis[Gamepad_axis::RTRIGGER];//turbo and slow buttons	
@@ -82,12 +84,15 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.drive.field_relative=field_relative.get();
 	}
 
+	const double BURST_TIME=2;
+	if(info.gunner_joystick.button[Gamepad_button::A]) burst_timer.set(BURST_TIME);
+
 	goals.gun=[&]{
 		if(info.gunner_joystick.axis[Gamepad_axis::LTRIGGER]>.9){
-			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9) return Gun::Goal::SHOOT;
-			else return Gun::Goal::REV;
+			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9 || !burst_timer.done()) return Gun::Goal::SHOOT;
+			return Gun::Goal::REV;
 		}
-		else return Gun::Goal::OFF;
+		return Gun::Goal::OFF;
 	}();
 
 	return goals;

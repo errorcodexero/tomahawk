@@ -21,7 +21,7 @@ Driver:
 
 
 Gunner:
- A          - 
+ A          - Burst fire
  B          - 
  X          - 
  Y          - 
@@ -29,8 +29,8 @@ Gunner:
  Back       - 
  RB         - 
  LB         - 
- RT         - 
- LT         - 
+ RT         - Shoot
+ LT         - Rev
  L_Joy:
   Up        - 
   Down      - 

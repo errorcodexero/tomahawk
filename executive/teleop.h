@@ -16,7 +16,8 @@ struct Teleop : Executive_impl<Teleop> {
 	
 	#define TELEOP_ITEMS(X)\
 		X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges)\
-		X(Posedge_toggle,field_relative)
+		X(Posedge_toggle,field_relative)\
+		X(Countdown_timer,burst_timer)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 
 	Executive next_mode(Next_mode_info);
