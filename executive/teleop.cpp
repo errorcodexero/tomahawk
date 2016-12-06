@@ -89,10 +89,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 
 	goals.gun=[&]{
 		if(info.gunner_joystick.axis[Gamepad_axis::LTRIGGER]>.9){
-			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9 || !burst_timer.done()) return Gun::Goal::SHOOT;
-			return Gun::Goal::REV;
+			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9 || !burst_timer.done()) return Gun::Goal::shoot();
+			return Gun::Goal::rev();
 		}
-		return Gun::Goal::OFF;
+		return Gun::Goal::off();
 	}();
 
 	return goals;

@@ -6,9 +6,34 @@
 #include "../util/countdown_timer.h"
 
 struct Gun {
-	enum class Goal{OFF,REV,SHOOT};
+	struct Goal {
+		public:
+		#define GUN_GOAL_MODES \
+			X(OFF) \
+			X(REV) \
+			X(SHOOT) \
+			X(NUMBERED_SHOOT)
+		#define X(name) name,
+		enum class Mode{GUN_GOAL_MODES};
+		#undef X
 
-	typedef Goal Output;
+		private:
+		Mode mode_;
+		int to_shoot_;
+
+		public:
+		Goal();
+
+		Mode mode()const;
+		int to_shoot()const;
+
+		static Goal off();
+		static Goal rev();
+		static Goal shoot();
+		static Goal numbered_shoot(int);
+	};
+
+	enum class Output{OFF,REV,SHOOT};
 
 	struct Input{
 		bool enabled;
@@ -48,6 +73,8 @@ std::ostream& operator<<(std::ostream&,Gun::Input);
 std::ostream& operator<<(std::ostream&,Gun::Status_detail);
 std::ostream& operator<<(std::ostream&,Gun::Estimator);
 std::ostream& operator<<(std::ostream&,Gun);
+
+bool operator<(Gun::Goal,Gun::Goal);
 
 bool operator==(Gun::Input,Gun::Input);
 bool operator!=(Gun::Input,Gun::Input);
