@@ -585,7 +585,7 @@ cc_test(
 	srcs=["executive/teleop.cpp","executive/teleop.h"],
 	copts=["-DTELEOP_TEST"],
 	deps=[":executive",":posedge_trigger_debounce",":posedge_toggle",":test"],
-	size="medium"
+	timeout="short"
 )
 
 cc_test(
