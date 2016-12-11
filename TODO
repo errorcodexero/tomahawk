@@ -14,6 +14,7 @@ NOT AS HIGH PRIORITY for Bunnybots:
 
 NICE THINGS TO HAVE:
 	- Clean-up stuff:
+		- deploy script
 		- Use enum class more places
 		- Use std::array in place of C arrays in several places
 	- Clean up panel interpret
