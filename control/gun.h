@@ -39,7 +39,19 @@ struct Gun {
 		bool enabled;
 	};
 
-	enum class Status_detail{OFF,REVVING,REVVED};
+	struct Status_detail {
+		#define REV_MODES \
+			X(OFF) \
+			X(REVVING) \
+			X(REVVED)
+		#define X(name) name,
+		enum class Rev_mode{REV_MODES};
+		#undef X
+		Rev_mode mode;
+		int shots_fired;
+
+		//Status_detail();
+	};
 
 	typedef Status_detail Status;
 
@@ -79,6 +91,10 @@ bool operator<(Gun::Goal,Gun::Goal);
 bool operator==(Gun::Input,Gun::Input);
 bool operator!=(Gun::Input,Gun::Input);
 bool operator<(Gun::Input,Gun::Input);
+
+bool operator==(Gun::Status_detail,Gun::Status_detail);
+bool operator!=(Gun::Status_detail,Gun::Status_detail);
+bool operator<(Gun::Status_detail,Gun::Status_detail);
 
 bool operator==(Gun::Input_reader,Gun::Input_reader);
 bool operator<(Gun::Input_reader,Gun::Input_reader);
