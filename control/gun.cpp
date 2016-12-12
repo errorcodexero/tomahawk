@@ -6,7 +6,7 @@ using namespace std;
 #define POWER_ADDRESS 4
 #define GUN_POWER .2
 #define REV_TIME 5
-#define SHOT_TIME .5
+#define SHOT_TIME .25
 
 ostream& operator<<(ostream& o,Gun::Goal::Mode a){
 	#define X(name) if(a==Gun::Goal::Mode::name) return  o<<"Gun::Goal::Mode("#name")";

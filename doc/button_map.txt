@@ -22,7 +22,7 @@ Driver:
 
 Gunner:
  A          - Burst fire
- B          - 
+ B          - Single shot
  X          - 
  Y          - 
  Start      - 
