@@ -49,8 +49,6 @@ struct Gun {
 		#undef X
 		Rev_mode mode;
 		int shots_fired;
-
-		//Status_detail();
 	};
 
 	typedef Status_detail Status;
@@ -67,7 +65,9 @@ struct Gun {
 	
 	struct Estimator{
 		Status_detail last;
-		Countdown_timer timer;
+		Output last_output;
+		Countdown_timer rev_timer;
+		Countdown_timer shot_timer;
 		
 		void update(Time,Input,Output);
 		Status_detail get()const;

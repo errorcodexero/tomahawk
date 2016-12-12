@@ -6,6 +6,7 @@ using namespace std;
 #define POWER_ADDRESS 4
 #define GUN_POWER .2
 #define REV_TIME 5
+#define SHOT_TIME .5
 
 ostream& operator<<(ostream& o,Gun::Goal::Mode a){
 	#define X(name) if(a==Gun::Goal::Mode::name) return  o<<"Gun::Goal::Mode("#name")";
@@ -46,7 +47,7 @@ ostream& operator<<(ostream& o, Gun::Status_detail a){
 }
 
 ostream& operator<<(ostream& o, Gun::Estimator a){
-	return o<<"Gun::Estimator( last:"<<a.last<<" timer:"<<a.timer<<")";
+	return o<<"Gun::Estimator( last:"<<a.last<<" rev_timer:"<<a.rev_timer<<" shot_timer"<<a.shot_timer<<")";
 }
 
 ostream& operator<<(ostream& o, Gun g){
@@ -83,10 +84,7 @@ bool operator<(Gun::Status_detail a,Gun::Status_detail b){
 bool operator==(Gun::Input_reader,Gun::Input_reader){ return true; }
 bool operator<(Gun::Input_reader,Gun::Input_reader){ return false; }
 
-bool operator==(Gun::Estimator a,Gun::Estimator b){
-	return a.last==b.last && a.timer==b.timer;
-}
-
+bool operator==(Gun::Estimator a,Gun::Estimator b){ return a.last==b.last && a.rev_timer==b.rev_timer && a.shot_timer==b.shot_timer; }
 bool operator!=(Gun::Estimator a,Gun::Estimator b){ return !(a==b); }
 
 bool operator==(Gun::Output_applicator,Gun::Output_applicator){ return true; }
@@ -156,34 +154,46 @@ Gun::Goal Gun::Goal::numbered_shoot(int darts){
 	return a;
 }
 
-Gun::Estimator::Estimator():last({Gun::Status_detail::Rev_mode::OFF, 0}),timer(){}
+Gun::Estimator::Estimator():last({Gun::Status_detail::Rev_mode::OFF, 0}),rev_timer(),shot_timer(){}
 
 Gun::Status_detail Gun::Estimator::get()const{ return last; }
 
 void Gun::Estimator::update(Time time,Gun::Input in,Gun::Output output){
-	timer.update(time,in.enabled);
+	rev_timer.update(time,in.enabled);
+	shot_timer.update(time,in.enabled);
 	switch(last.mode){
 		case Status_detail::Rev_mode::REVVED:
 			if(output==Output::OFF){
 				last.mode=Status_detail::Rev_mode::OFF;
-			}
+				last.shots_fired=0;
+			}else if(output==Output::SHOOT){
+				if(last_output==Output::REV) {
+					last.shots_fired=0;
+					shot_timer.set(SHOT_TIME);
+				}
+				if(shot_timer.done()){
+					last.shots_fired++;
+					shot_timer.set(SHOT_TIME);
+				}
+			}else if(output==Output::REV && last_output==Output::SHOOT) last.shots_fired=0;
 			break;
 		case Status_detail::Rev_mode::REVVING:
 			if(output==Output::OFF){
 				last.mode=Status_detail::Rev_mode::OFF;
 			}
-			if(timer.done()){
+			if(rev_timer.done()){
 				last.mode=Status_detail::Rev_mode::REVVED;
 			}
 			break;
 		case Status_detail::Rev_mode::OFF:
 			if(output==Output::REV){
 				last.mode=Status_detail::Rev_mode::REVVING;
-				timer.set(REV_TIME);
+				rev_timer.set(REV_TIME);
 			}
 			break;
 		default: assert(0);
 	}
+	last_output=output;
 }
 
 set<Gun::Input> examples(Gun::Input*){ return {{0}, {1}}; }
@@ -203,6 +213,9 @@ set<Gun::Status_detail> examples(Gun::Status_detail*){
 Gun::Output control(Gun::Status_detail status,Gun::Goal goal){
 	switch(goal.mode()){
 		case Gun::Goal::Mode::NUMBERED_SHOOT:
+			if(status.shots_fired>=goal.to_shoot()) return Gun::Output::REV;
+			if(status.mode==Gun::Status_detail::Rev_mode::REVVED) return Gun::Output::SHOOT;
+			return Gun::Output::REV;
 		case Gun::Goal::Mode::SHOOT:
 			if(status.mode==Gun::Status_detail::Rev_mode::REVVED) return Gun::Output::SHOOT;
 			return Gun::Output::REV;
