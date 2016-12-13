@@ -82,7 +82,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.drive.field_relative=field_relative.get();
 	}
 	
-	const int BURST_SHOTS=5,SINGLE_SHOTS=1;
+	const int BURST_SHOTS=3,SINGLE_SHOTS=1;
 	if(gun_mode==Gun_mode::BURST && info.toplevel_status.gun.shots_fired>=BURST_SHOTS) gun_mode=Gun_mode::OTHER;
 	if(gun_mode==Gun_mode::SINGLE && info.toplevel_status.gun.shots_fired>=SINGLE_SHOTS) gun_mode=Gun_mode::OTHER;
 
