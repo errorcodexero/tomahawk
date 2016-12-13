@@ -2,12 +2,14 @@
 
 #include "teleop.h" 
 #include "auto_null.h"
+#include "auto_forward.h"
 
 using namespace std;
 
 using Mode=Executive;
 
 Executive auto_mode_convert(Next_mode_info info){
+	//return Executive{Auto_forward()};
 	if (info.panel.in_use) {
 		switch(info.panel.auto_select){ 
 			case 1: 
