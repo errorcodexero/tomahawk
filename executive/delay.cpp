@@ -13,8 +13,8 @@ static const unsigned int AUTO_SELECTOR_PORT_1 = 0, AUTO_SELECTOR_PORT_2 = 1;//t
 Executive auto_mode_convert(Next_mode_info info){
 	if(!info.autonomous) return Mode{Teleop()};
 	if(info.in.digital_io.in[AUTO_SELECTOR_PORT_1] == Digital_in::_1) return Mode{Auto_forward()};
-	else if(info.in.digital_io.in[AUTO_SELECTOR_PORT_2] == Digital_in::_1) return Mode{Delay()};//there isn't another auto mode that we want to use yet
-	return Mode{Delay()};
+	else if(info.in.digital_io.in[AUTO_SELECTOR_PORT_2] == Digital_in::_1) return Mode{Auto_null()};//there isn't another auto mode that we want to use yet
+	return Mode{Auto_null()};
 }
 
 Mode Delay::next_mode(Next_mode_info info){
