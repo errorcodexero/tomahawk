@@ -34,9 +34,7 @@ bool operator==(Teleop::Nudge const& a,Teleop::Nudge const& b){
 
 Executive Teleop::next_mode(Next_mode_info info) {
 	if (info.autonomous_start) {
-		if (info.panel.in_use) {
-			return Executive{Delay()};
-		}
+		return Executive{Delay()};
 	}
 	Teleop t(CONSTRUCT_STRUCT_PARAMS(TELEOP_ITEMS));
 	return Executive{t};

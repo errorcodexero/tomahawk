@@ -6,7 +6,7 @@ using namespace std;
 
 Executive Auto_forward::next_mode(Next_mode_info info){
 	if(!info.autonomous) return Executive{Teleop()};
-	static const Time DRIVE_TIME = 3;//seconds, assumed
+	static const Time DRIVE_TIME = 1.5;//seconds, assumed
 	if(info.since_switch > DRIVE_TIME) return Executive{Auto_stop()};
 	return Executive{Auto_forward()};
 }
