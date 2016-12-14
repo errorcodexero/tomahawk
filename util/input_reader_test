@@ -1,0 +1,6 @@
+g++ --std=c++14 -Wall -Werror -DINPUT_READER_TEST \
+	input_reader.cpp \
+	interface.cpp \
+	driver_station_interface.cpp \
+	util.cpp \
+	-o input_reader 2>&1 && ./input_reader
