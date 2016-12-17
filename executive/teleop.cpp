@@ -34,15 +34,13 @@ bool operator==(Teleop::Nudge const& a,Teleop::Nudge const& b){
 
 Executive Teleop::next_mode(Next_mode_info info) {
 	if (info.autonomous_start) {
-		if (info.panel.in_use) {
-			return Executive{Delay()};
-		}
+		return Executive{Delay()};
 	}
 	Teleop t(CONSTRUCT_STRUCT_PARAMS(TELEOP_ITEMS));
 	return Executive{t};
 }
 
-Teleop::Teleop(){}
+Teleop::Teleop():gun_mode(Gun_mode::OTHER){}
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
@@ -51,8 +49,6 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	
 	bool enabled = info.in.robot_mode.enabled;
 	
-	burst_timer.update(info.in.now,enabled);
-
 	{//Set drive goals
 		double boost=info.main_joystick.axis[Gamepad_axis::LTRIGGER],slow=info.main_joystick.axis[Gamepad_axis::RTRIGGER];//turbo and slow buttons	
 	
@@ -66,30 +62,36 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		
 		//field_relative.update(info.main_joystick.button[Gamepad_button::START]); //Not worth it right now
 
-		goals.drive.direction.x=clip([&]{
+		goals.drive.direction.x = -clip([&]{
 			if (!nudges[Nudges::LEFT].timer.done()) return NUDGE_POWER;
 			if (!nudges[Nudges::RIGHT].timer.done()) return -NUDGE_POWER;
 			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTX],boost,slow);
 		}());
-		goals.drive.direction.y=clip([&]{
+		goals.drive.direction.y = clip([&]{
 			if (!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
 			if (!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
 			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
 		}());
-		goals.drive.direction.theta=clip([&]{
+		goals.drive.direction.theta = clip([&]{
 			if (!nudges[Nudges::CLOCKWISE].timer.done()) return NUDGE_CW_POWER;
 			if (!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return NUDGE_CCW_POWER;
 			return set_drive_speed(info.main_joystick.axis[Gamepad_axis::RIGHTX],boost,slow) * 0.75;
 		}());
 		goals.drive.field_relative=field_relative.get();
 	}
+	
+	const int BURST_SHOTS=3,SINGLE_SHOTS=1;
+	if(gun_mode==Gun_mode::BURST && info.toplevel_status.gun.shots_fired>=BURST_SHOTS) gun_mode=Gun_mode::OTHER;
+	if(gun_mode==Gun_mode::SINGLE && info.toplevel_status.gun.shots_fired>=SINGLE_SHOTS) gun_mode=Gun_mode::OTHER;
 
-	const double BURST_TIME=2;
-	if(info.gunner_joystick.button[Gamepad_button::A]) burst_timer.set(BURST_TIME);
-
+	if(info.gunner_joystick.button[Gamepad_button::A]) gun_mode=Gun_mode::BURST;
+	if(info.gunner_joystick.button[Gamepad_button::B]) gun_mode=Gun_mode::SINGLE;
+	
 	goals.gun=[&]{
 		if(info.gunner_joystick.axis[Gamepad_axis::LTRIGGER]>.9){
-			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9 || !burst_timer.done()) return Gun::Goal::shoot();
+			if(gun_mode==Gun_mode::SINGLE) return Gun::Goal::numbered_shoot(1);
+			if(gun_mode==Gun_mode::BURST) return Gun::Goal::numbered_shoot(5);
+			if(info.gunner_joystick.axis[Gamepad_axis::RTRIGGER]>.9) return Gun::Goal::shoot();
 			return Gun::Goal::rev();
 		}
 		return Gun::Goal::off();

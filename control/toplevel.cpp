@@ -155,7 +155,7 @@ Toplevel::Status::Status():
 		{0.0,0.0}*/
 	),
 	pump(Pump::Status::NOT_FULL),
-	gun(Gun::Status::OFF)
+	gun({Gun::Status::Rev_mode::OFF,0})
 {}
 
 bool operator==(Toplevel::Status a,Toplevel::Status b){
