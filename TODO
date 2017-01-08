@@ -1,10 +1,8 @@
 HIGH PRIORITY for Bunnybots:
-	- Gun
 	- Logging
 
 
 NOT AS HIGH PRIORITY for Bunnybots:
-	- Autonomous
 	- Log Analysis
 	- Laptop configuration
 		-ssh config:
