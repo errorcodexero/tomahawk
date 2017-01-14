@@ -1,5 +1,6 @@
 #include "dio_control.h"
 #include <iostream>
+#include "WPILib.h"
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
 #include "Encoder.h"
